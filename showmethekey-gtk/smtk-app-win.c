@@ -13,6 +13,7 @@ struct _SmtkAppWin {
 	GtkWidget *menu_button;
 	GtkWidget *keys_win_switch;
 	GtkWidget *pause_switch;
+	GtkWidget *handle_switch;
 	GtkWidget *shift_switch;
 	GtkWidget *mouse_switch;
 	GtkWidget *mode_selector;
@@ -26,6 +27,7 @@ G_DEFINE_TYPE(SmtkAppWin, smtk_app_win, GTK_TYPE_APPLICATION_WINDOW)
 static void smtk_app_win_enable(SmtkAppWin *win)
 {
 	gtk_widget_set_sensitive(win->pause_switch, false);
+	gtk_widget_set_sensitive(win->handle_switch, false);
 	gtk_widget_set_sensitive(win->width_entry, true);
 	gtk_widget_set_sensitive(win->height_entry, true);
 }
@@ -33,6 +35,7 @@ static void smtk_app_win_enable(SmtkAppWin *win)
 static void smtk_app_win_disable(SmtkAppWin *win)
 {
 	gtk_widget_set_sensitive(win->pause_switch, true);
+	gtk_widget_set_sensitive(win->handle_switch, true);
 	gtk_widget_set_sensitive(win->width_entry, false);
 	gtk_widget_set_sensitive(win->height_entry, false);
 }
@@ -42,10 +45,13 @@ static void smtk_app_win_keys_win_on_destroy(SmtkAppWin *win,
 					     SmtkKeysWin *keys_win)
 {
 	if (win->keys_win != NULL) {
+		// Should set this first as we check it in callback.
 		win->keys_win = NULL;
 
 		gtk_switch_set_active(GTK_SWITCH(win->keys_win_switch), false);
 		gtk_switch_set_active(GTK_SWITCH(win->pause_switch), false);
+		// Always show handle by default.
+		gtk_switch_set_active(GTK_SWITCH(win->handle_switch), true);
 		smtk_app_win_enable(win);
 	}
 }
@@ -120,6 +126,21 @@ static void smtk_app_win_on_pause_switch_active(SmtkAppWin *win,
 		smtk_keys_win_pause(SMTK_KEYS_WIN(win->keys_win));
 	else
 		smtk_keys_win_resume(SMTK_KEYS_WIN(win->keys_win));
+}
+
+static void smtk_app_win_on_handle_switch_active(SmtkAppWin *win,
+						 GParamSpec *prop,
+						 GtkSwitch *handle_switch)
+{
+	// This only works when keys_win is open.
+	// Calling `gtk_switch_set_active()` also triggers this, but then we
+	// don't have a `keys_win` at that time.
+	if (win->keys_win == NULL)
+		return;
+
+	smtk_keys_win_set_show_handle(
+		SMTK_KEYS_WIN(win->keys_win),
+		gtk_switch_get_active(GTK_SWITCH(win->handle_switch)));
 }
 
 static void smtk_app_win_on_shift_switch_active(SmtkAppWin *win,
@@ -262,6 +283,8 @@ static void smtk_app_win_class_init(SmtkAppWinClass *win_class)
 	gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(win_class),
 					     SmtkAppWin, pause_switch);
 	gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(win_class),
+					     SmtkAppWin, handle_switch);
+	gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(win_class),
 					     SmtkAppWin, shift_switch);
 	gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(win_class),
 					     SmtkAppWin, mouse_switch);
@@ -277,8 +300,11 @@ static void smtk_app_win_class_init(SmtkAppWinClass *win_class)
 		GTK_WIDGET_CLASS(win_class),
 		smtk_app_win_on_keys_win_switch_active);
 	gtk_widget_class_bind_template_callback(
+						GTK_WIDGET_CLASS(win_class),
+						smtk_app_win_on_pause_switch_active);
+	gtk_widget_class_bind_template_callback(
 		GTK_WIDGET_CLASS(win_class),
-		smtk_app_win_on_pause_switch_active);
+		smtk_app_win_on_handle_switch_active);
 	gtk_widget_class_bind_template_callback(
 		GTK_WIDGET_CLASS(win_class),
 		smtk_app_win_on_shift_switch_active);
@@ -364,10 +390,16 @@ void smtk_app_win_show_usage_dialog(SmtkAppWin *win)
 		  "href=\"https://github.com/AlynxZhou/showmethekey#special-"
 		  "notice-for-wayland-session-users\">README</a> to see if "
 		  "there are configurations for your compositor.\n\n"
-		  "4. If you want to pause it (for example you need to insert "
+		  "4. The \"Clickable Area\" label is the only clickable place "
+		  "in the keys window, other places are click-through, it is "
+		  "always shown when you starts keys window because you need "
+		  "to click it to move keys window or set \"Always on Top\". "
+		  "If you don't want to show it while recording, disable the "
+		  "\"Show Handle\" switch."
+		  "5. If you want to pause it (for example you need to insert "
 		  "password), you can use the \"Pause\" switch, it will not "
 		  "record your keys when paused.\n\n"
-		  "5. Set Timeout to 0 if you want to keep all keys.\n\n"
+		  "6. Set Timeout to 0 if you want to keep all keys.\n\n"
 		  "You can open this dialog again via menu icon on title bar "
 		  "-> \"Usage\"."));
 	gtk_window_set_modal(GTK_WINDOW(dialog), true);

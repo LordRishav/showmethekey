@@ -21,6 +21,7 @@ struct _SmtkKeysWin {
 	SmtkKeyMode mode;
 	bool show_shift;
 	bool show_mouse;
+	bool show_handle;
 	int timeout;
 	bool paused;
 	GError *error;
@@ -32,6 +33,7 @@ enum {
 	PROP_MODE,
 	PROP_SHOW_SHIFT,
 	PROP_SHOW_MOUSE,
+	PROP_SHOW_HANDLE,
 	PROP_TIMEOUT,
 	N_PROPERTIES
 };
@@ -53,6 +55,9 @@ static void smtk_keys_win_set_property(GObject *object,
 		break;
 	case PROP_SHOW_MOUSE:
 		win->show_mouse = g_value_get_boolean(value);
+		break;
+	case PROP_SHOW_HANDLE:
+		win->show_handle = g_value_get_boolean(value);
 		break;
 	case PROP_TIMEOUT:
 		win->timeout = g_value_get_int(value);
@@ -79,6 +84,9 @@ static void smtk_keys_win_get_property(GObject *object,
 		break;
 	case PROP_SHOW_MOUSE:
 		g_value_set_boolean(value, win->show_mouse);
+		break;
+	case PROP_SHOW_HANDLE:
+		g_value_set_boolean(value, win->show_handle);
 		break;
 	case PROP_TIMEOUT:
 		g_value_set_int(value, win->timeout);
@@ -379,6 +387,10 @@ static void smtk_keys_win_class_init(SmtkKeysWinClass *win_class)
 	obj_properties[PROP_SHOW_MOUSE] = g_param_spec_boolean(
 		"show-mouse", "Show Mouse", "Show Mouse Button", true,
 		G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
+	obj_properties[PROP_SHOW_HANDLE] = g_param_spec_boolean(
+		"show-handle", "Show Window Handle",
+		"Show Window Handle on Titlebar", true,
+		G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
 	obj_properties[PROP_TIMEOUT] = g_param_spec_int(
 		"timeout", "Text Timeout", "Text Timeout", 0, 30000, 1000,
 		G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
@@ -404,7 +416,9 @@ GtkWidget *smtk_keys_win_new(bool show_shift, bool show_mouse, SmtkKeyMode mode,
 		// Wayland does not support this, it's ok.
 		// "skip-pager-hint", true, "skip-taskbar-hint", true,
 		"mode", mode, "show-shift", show_shift, "show-mouse",
-		show_mouse, "timeout", timeout, NULL);
+		show_mouse,
+		// Handle should always be shown by default.
+		"show-handle", true, "timeout", timeout, NULL);
 
 	if (win->error != NULL) {
 		g_propagate_error(error, win->error);
@@ -455,6 +469,17 @@ void smtk_keys_win_set_show_mouse(SmtkKeysWin *win, bool show_mouse)
 	smtk_keys_emitter_set_show_mouse(win->emitter, show_mouse);
 	// Sync self property.
 	g_object_set(win, "show-mouse", show_mouse, NULL);
+}
+
+void smtk_keys_win_set_show_handle(SmtkKeysWin *win, bool show_handle)
+{
+	g_return_if_fail(win != NULL);
+
+	// Setting visible to `false` already makes it click through, so we
+	// don't need to set input region again.
+	gtk_widget_set_visible(win->handle, show_handle);
+	// Sync self property.
+	g_object_set(win, "show-handle", show_handle, NULL);
 }
 
 void smtk_keys_win_set_mode(SmtkKeysWin *win, SmtkKeyMode mode)

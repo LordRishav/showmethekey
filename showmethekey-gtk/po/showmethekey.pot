@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: showmethekey\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-26 16:42+0800\n"
+"POT-Creation-Date: 2023-02-07 10:47+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: showmethekey-gtk/smtk-app.c:67 showmethekey-gtk/smtk-app-win.c:402
+#: showmethekey-gtk/smtk-app.c:67 showmethekey-gtk/smtk-app-win.c:434
 #: showmethekey-gtk/smtk-app-win.ui:9 showmethekey-gtk/smtk-app-win.ui:14
 msgid "Show Me The Key"
 msgstr ""
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Display version then exit."
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.c:327
+#: showmethekey-gtk/smtk-app-win.c:353
 msgid ""
 "Usage:\n"
 "\n"
@@ -55,23 +55,28 @@ msgid ""
 "showmethekey#special-notice-for-wayland-session-users\">README</a> to see if "
 "there are configurations for your compositor.\n"
 "\n"
-"4. If you want to pause it (for example you need to insert password), you "
-"can use the \"Pause\" switch, it will not record your keys when paused.\n"
+"4. The \"Clickable Area\" label is the only clickable place in the keys "
+"window, other places are click-through, it is always shown when you starts "
+"keys window because you need to click it to move keys window or set \"Always "
+"on Top\". If you don't want to show it while recording, disable the \"Show "
+"Handle\" switch.5. If you want to pause it (for example you need to insert "
+"password), you can use the \"Pause\" switch, it will not record your keys "
+"when paused.\n"
 "\n"
-"5. Set Timeout to 0 if you want to keep all keys.\n"
+"6. Set Timeout to 0 if you want to keep all keys.\n"
 "\n"
 "You can open this dialog again via menu icon on title bar -> \"Usage\"."
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.c:401
+#: showmethekey-gtk/smtk-app-win.c:433
 msgid "translator-credits"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.c:401
+#: showmethekey-gtk/smtk-app-win.c:433
 msgid "About Show Me The Key"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.c:403
+#: showmethekey-gtk/smtk-app-win.c:435
 msgid "Show keys you typed on screen."
 msgstr ""
 
@@ -88,34 +93,38 @@ msgid "_Pause"
 msgstr ""
 
 #: showmethekey-gtk/smtk-app-win.ui:87
+msgid "Show _Handle"
+msgstr ""
+
+#: showmethekey-gtk/smtk-app-win.ui:115
 msgid "Show _Shift Separately"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.ui:114
+#: showmethekey-gtk/smtk-app-win.ui:142
 msgid "Show _Mouse Button"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.ui:140
+#: showmethekey-gtk/smtk-app-win.ui:168
 msgid "Display Mode"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.ui:152
+#: showmethekey-gtk/smtk-app-win.ui:180
 msgid "Composed"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.ui:153
+#: showmethekey-gtk/smtk-app-win.ui:181
 msgid "Raw"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.ui:170
+#: showmethekey-gtk/smtk-app-win.ui:198
 msgid "Timeout (ms)"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.ui:197
+#: showmethekey-gtk/smtk-app-win.ui:225
 msgid "Width (px)"
 msgstr ""
 
-#: showmethekey-gtk/smtk-app-win.ui:219
+#: showmethekey-gtk/smtk-app-win.ui:247
 msgid "Height (px)"
 msgstr ""
 
@@ -133,6 +142,6 @@ msgstr ""
 
 #. Disable subtitle to get a compact header bar.
 #. gtk_header_bar_set_has_subtitle(GTK_HEADER_BAR(win->header_bar), false);
-#: showmethekey-gtk/smtk-keys-win.c:245
+#: showmethekey-gtk/smtk-keys-win.c:260
 msgid "Clickable Area"
 msgstr ""
