@@ -19,6 +19,7 @@ void smtk_keys_win_resume(SmtkKeysWin *win);
 void smtk_keys_win_set_mode(SmtkKeysWin *win, SmtkKeyMode mode);
 void smtk_keys_win_set_show_shift(SmtkKeysWin *win, bool show_shift);
 void smtk_keys_win_set_show_mouse(SmtkKeysWin *win, bool show_mouse);
+void smtk_keys_win_set_clickable(SmtkKeysWin *win, bool clickable);
 void smtk_keys_win_set_timeout(SmtkKeysWin *win, int timeout);
 
 G_END_DECLS
